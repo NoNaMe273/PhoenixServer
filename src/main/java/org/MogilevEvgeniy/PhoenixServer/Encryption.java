@@ -1,6 +1,6 @@
 package org.MogilevEvgeniy.PhoenixServer;
 
-public class crypto {
+public class Encryption {
 
     private static final String RUSSIAN_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
     private static final String LATIN_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -73,16 +73,5 @@ public class crypto {
             decrypted.append(decryptedChar);
         }
         return decrypted.toString();
-    }
-
-    public static void oi() {
-        String text = "hello, world!";
-        String key = "Ключ";
-
-        String encryptedText = encrypt(text, key);
-        System.out.println("Encrypted: " + encryptedText);
-
-        String decryptedText = decrypt(encryptedText, key);
-        System.out.println("Decrypted: " + decryptedText);
     }
 }

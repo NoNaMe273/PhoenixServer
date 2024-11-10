@@ -12,31 +12,24 @@ import java.sql.SQLException;
 
 @Component
 public class Login extends TextWebSocketHandler {
-    private WebSocketSessionManager webSocketSessionManager = new WebSocketSessionManager();
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception{
-        //обработка подключения
-        webSocketSessionManager.addWebSocketSession(session);
-        System.out.println(session.getId()+" - connected");
+    public void afterConnectionEstablished(WebSocketSession session) {
+        System.out.println(session.getId() + " - connected");
     }
+
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception{
-        //обработка разрыва соеденения
-        webSocketSessionManager.removeWebSocketSession(session);
-        System.out.println(session.getId()+" - disconnected");
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        System.out.println(session.getId() + " - disconnected");
     }
+
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException, SQLException, ClassNotFoundException {
-        //обработка сообщения
+    public void handleTextMessage(WebSocketSession session, TextMessage message) throws SQLException, ClassNotFoundException {
         String payload = message.getPayload();
-        System.out.println(payload);
-
         String[] parts = payload.split("//", 2);
-        payload = String.valueOf(Function.Login(parts[0], parts[1]));
-        System.out.println(payload+" - log");
-
-        try {session.sendMessage(new TextMessage(payload));
+        payload = Function.login(parts[0], parts[1]);
+        try {
+            session.sendMessage(new TextMessage(payload));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

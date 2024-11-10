@@ -11,31 +11,23 @@ import java.io.IOException;
 @Component
 public class Registration extends TextWebSocketHandler {
 
-    private WebSocketSessionManager webSocketSessionManager = new WebSocketSessionManager();
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) {
+        System.out.println(session.getId() + " - connected");
+    }
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception{
-        //обработка подключения
-        webSocketSessionManager.addWebSocketSession(session);
-        System.out.println(session.getId()+" - connected");
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        System.out.println(session.getId() + " - disconnected");
     }
+
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception{
-        //обработка разрыва соеденения
-        webSocketSessionManager.removeWebSocketSession(session);
-        System.out.println(session.getId()+" - disconnected");
-    }
-    @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException{
-        //обработка сообщения
+    public void handleTextMessage(WebSocketSession session, TextMessage message) {
         String payload = message.getPayload();
-        System.out.println(payload);
-
         String[] parts = payload.split("//", 2);
-        payload = String.valueOf(Function.NewUser(parts[0], parts[1]));
-        System.out.println(payload+" - reg");
-
-        try {session.sendMessage(new TextMessage(payload));
+        payload = String.valueOf(Function.createNewUser(parts[0], parts[1]));
+        try {
+            session.sendMessage(new TextMessage(payload));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

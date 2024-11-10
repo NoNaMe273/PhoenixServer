@@ -10,26 +10,22 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 @Component
-public class NewDialog extends TextWebSocketHandler {
-
+public class GettingDialogNames extends TextWebSocketHandler {
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) {
         System.out.println(session.getId() + " - connected");
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         System.out.println(session.getId() + " - disconnected");
     }
 
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException, SQLException, ClassNotFoundException {
+    public void handleTextMessage(WebSocketSession session, TextMessage message) throws SQLException, ClassNotFoundException {
         String payload = message.getPayload();
-        System.out.println(payload);
-        String[] parts = payload.split("//", 3);
-        payload = String.valueOf(Function.createNewDialog(parts[0], parts[1], parts[2]));
-        System.out.println(payload + " - reg");
+        payload = Function.getDialogNames(payload);
         try {
             session.sendMessage(new TextMessage(payload));
         } catch (IOException e) {

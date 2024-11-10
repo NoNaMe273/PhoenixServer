@@ -13,129 +13,92 @@ public class SQLConnect {
     public static PreparedStatement statmt;
     public static ResultSet resSet;
 
-    // --------ПОДКЛЮЧЕНИЕ К БАЗЕ ДАННЫХ--------
-    public static void Conn(String DBName) throws ClassNotFoundException, SQLException
-    {
+    public static void connection(String dateBaseName) throws ClassNotFoundException, SQLException {
         conn = null;
         Class.forName("org.sqlite.JDBC");
-        conn = DriverManager.getConnection("jdbc:sqlite:src/main/resources/"+DBName+".s3db");
-
-        System.out.println("База Подключена!");
+        conn = DriverManager.getConnection("jdbc:sqlite:src/main/resources/" + dateBaseName + ".s3db");
     }
 
-    // --------Создание таблицы--------
-    public static void CreateDB(String REQ) throws ClassNotFoundException, SQLException
-    {
-        statmt = conn.prepareStatement(REQ);
+    public static void createDateBase(String request) throws ClassNotFoundException, SQLException {
+        statmt = conn.prepareStatement(request);
         statmt.execute();
-
-        System.out.println("Таблица создана или уже существует.");
     }
 
-    // --------Заполнение таблицы--------
-    public static void WriteDB(String REQ) throws SQLException
-    {
-        statmt = conn.prepareStatement(REQ);
+    public static void writeDateBase(String request) throws SQLException {
+        statmt = conn.prepareStatement(request);
         statmt.execute();
-
-        System.out.println("Таблица заполнена");
     }
 
-    // -------- Вывод таблицы--------
-    public static String ReadDB(String log, String DBName) throws ClassNotFoundException, SQLException
-    {
-        statmt = conn.prepareStatement("SELECT * FROM "+DBName+" WHERE login = ?");
-        statmt.setString(1, log);
+    public static String readDateBase(String login, String dateBaseName) throws SQLException {
+        statmt = conn.prepareStatement("SELECT * FROM " + dateBaseName + " WHERE login = ?");
+        statmt.setString(1, login);
         resSet = statmt.executeQuery();
-
-        String pas = "";
-
+        String password = "";
         if (resSet.next()) {
-                pas = resSet.getString("password");
-                System.out.println( "password = " + pas );
-                System.out.println();
+            password = resSet.getString("password");
         }
-
-
-
-        System.out.println("Таблица выведена");
-        return pas;
+        return password;
     }
 
-    public static int CheckDB(String log) throws ClassNotFoundException, SQLException
-    {
+    public static int checkDateBase(String login) throws SQLException {
         statmt = conn.prepareStatement("SELECT * FROM users WHERE login = ?");
-        statmt.setString(1, log);
+        statmt.setString(1, login);
         resSet = statmt.executeQuery();
-
-        int logInDB = 1;
-
+        int loginInDateBase = 1;
         if (resSet.next()) {
-            logInDB = 0;
+            loginInDateBase = 0;
         }
-
-        return logInDB;
+        return loginInDateBase;
     }
 
-    // --------Закрытие--------
-    public static void CloseDB(int i) throws ClassNotFoundException, SQLException
-    {
+    public static void closeDateBase(int temp) throws SQLException {
         conn.close();
         statmt.close();
-        if(i == 2) resSet.close();
-
-        System.out.println("Соединения закрыты");
+        if (temp == 2) resSet.close();
     }
 
-    public static int CheckIDMessage(String from, String to) throws ClassNotFoundException, SQLException
-    {
+    public static int gettingIdDialog(String from, String to) throws SQLException {
         statmt = conn.prepareStatement("SELECT * FROM dialogID WHERE first = ? AND second = ? OR second = ? AND first = ?");
         statmt.setString(1, from);
         statmt.setString(2, to);
         statmt.setString(3, from);
         statmt.setString(4, to);
         resSet = statmt.executeQuery();
-
-        int i = 0;
-
+        int id = 0;
         if (resSet.next()) {
-            i = resSet.getInt("id");
-            System.out.println( "ID = " + i );
-            System.out.println();
+            id = resSet.getInt("id");
         }
-
-        return i;
+        return id;
     }
 
-    public static ArrayList<String> AllDialog(String log) throws ClassNotFoundException, SQLException{
-        ArrayList<String> i = new ArrayList<>();
+    public static ArrayList<String> gettingDialogNames(String login) throws SQLException {
+        ArrayList<String> tempArray = new ArrayList<>();
         statmt = conn.prepareStatement("SELECT * FROM dialogID WHERE first = ?");
-        statmt.setString(1, log);
+        statmt.setString(1, login);
         resSet = statmt.executeQuery();
         while (resSet.next()) {
-            i.add(resSet.getString("second"));
+            tempArray.add(resSet.getString("second"));
         }
         statmt = conn.prepareStatement("SELECT * FROM dialogID WHERE second = ?");
-        statmt.setString(1, log);
+        statmt.setString(1, login);
         resSet = statmt.executeQuery();
         while (resSet.next()) {
-            i.add(resSet.getString("first"));
+            tempArray.add(resSet.getString("first"));
         }
-        System.out.println(i);
-        return i;
+        return tempArray;
     }
 
-    public static ArrayList<String> GetDialog(int ID) throws ClassNotFoundException, SQLException{
-        ArrayList<String> i = new ArrayList<>();
+    public static ArrayList<String> gettingDialog(int id) throws SQLException {
+        ArrayList<String> tempArray = new ArrayList<>();
         statmt = conn.prepareStatement("SELECT * FROM dialog WHERE IDDialog = ?");
-        statmt.setInt(1, ID);
+        statmt.setInt(1, id);
         resSet = statmt.executeQuery();
         while (resSet.next()) {
-            i.add(resSet.getString("datetime"));
-            i.add(resSet.getString("text"));
-            i.add(resSet.getString("from"));
+            tempArray.add(resSet.getString("datetime"));
+            tempArray.add(resSet.getString("text"));
+            tempArray.add(resSet.getString("from"));
         }
-        return i;
+        return tempArray;
     }
 
 }

@@ -14,7 +14,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
         registry.addHandler(new Login(), "/Login").setAllowedOriginPatterns("*");
         registry.addHandler(new NewDialog(), "/NewDialog").setAllowedOriginPatterns("*");
         registry.addHandler(new OpenDialog(), "/OpenDialog").setAllowedOriginPatterns("*");
-        registry.addHandler(new DialogList(), "/DialogList").setAllowedOriginPatterns("*");
+        registry.addHandler(new GettingDialogNames(), "/DialogList").setAllowedOriginPatterns("*");
         registry.addHandler(new Notification(), "/Notification").setAllowedOriginPatterns("*");
     }
 }

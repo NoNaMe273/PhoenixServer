@@ -14,31 +14,24 @@ import java.util.Map;
 @Component
 public class Notification extends TextWebSocketHandler {
 
-    private WebSocketSessionManager webSocketSessionManager = new WebSocketSessionManager();
-
-    private Map<String, WebSocketSession> dictionary = new HashMap<String,WebSocketSession>();
+    private Map<String, WebSocketSession> dictionary = new HashMap<>();
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception{
-        //обработка подключения
-        webSocketSessionManager.addWebSocketSession(session);
-        System.out.println(session.getId()+" - connected");
+    public void afterConnectionEstablished(WebSocketSession session) {
+        System.out.println(session.getId() + " - connected");
     }
+
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception{
-        //обработка разрыва соеденения
-        webSocketSessionManager.removeWebSocketSession(session);
-        System.out.println(session.getId()+" - disconnected");
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        System.out.println(session.getId() + " - disconnected");
     }
+
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
-        //обработка сообщения
+    public void handleTextMessage(WebSocketSession session, TextMessage message) {
         String payload = message.getPayload();
-        System.out.println(payload);
-
         String[] parts = payload.split("//", 3);
         if (parts.length == 1) dictionary.put(parts[0], session);
-        else if(parts.length == 3){
+        else if (parts.length == 3) {
             if (dictionary.containsKey(parts[1])) {
                 session = dictionary.get(parts[1]);
                 try {
@@ -47,11 +40,6 @@ public class Notification extends TextWebSocketHandler {
                     throw new RuntimeException(e);
                 }
             }
-            else {
-                System.out.println("NOT IN MAP");
-                System.out.println(dictionary.toString());
-            }
         }
-        System.out.println(payload+" - reg");
     }
 }
