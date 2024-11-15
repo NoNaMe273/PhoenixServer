@@ -19,7 +19,7 @@ public class SQLConnect {
         conn = DriverManager.getConnection("jdbc:sqlite:src/main/resources/" + dateBaseName + ".s3db");
     }
 
-    public static void createDateBase(String request) throws ClassNotFoundException, SQLException {
+    public static void createDateBase(String request) throws SQLException {
         statmt = conn.prepareStatement(request);
         statmt.execute();
     }
@@ -29,15 +29,15 @@ public class SQLConnect {
         statmt.execute();
     }
 
-    public static String readDateBase(String login, String dateBaseName) throws SQLException {
-        statmt = conn.prepareStatement("SELECT * FROM " + dateBaseName + " WHERE login = ?");
-        statmt.setString(1, login);
+    public static String gettingFromDateBase(String temp, String dateBaseName, String where, String type) throws SQLException {
+        statmt = conn.prepareStatement("SELECT * FROM " + dateBaseName + " WHERE "+ where +" = ?");
+        statmt.setString(1, temp);
         resSet = statmt.executeQuery();
-        String password = "";
+        String result = "";
         if (resSet.next()) {
-            password = resSet.getString("password");
+            result = resSet.getString(type);
         }
-        return password;
+        return result;
     }
 
     public static int checkDateBase(String login) throws SQLException {
@@ -99,6 +99,17 @@ public class SQLConnect {
             tempArray.add(resSet.getString("from"));
         }
         return tempArray;
+    }
+
+    public static String gettingKey(String login, String dateBaseName) throws SQLException {
+        statmt = conn.prepareStatement("SELECT * FROM " + dateBaseName + " WHERE login = ?");
+        statmt.setString(1, login);
+        resSet = statmt.executeQuery();
+        String key = "";
+        if (resSet.next()) {
+            key = resSet.getString("key");
+        }
+        return key;
     }
 
 }

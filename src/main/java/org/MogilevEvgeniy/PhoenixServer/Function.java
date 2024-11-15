@@ -1,32 +1,42 @@
 package org.MogilevEvgeniy.PhoenixServer;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.UUID;
 
 public class Function {
 
-    public static int createNewUser(String login, String password) {
-        int result;
+    public static String createNewUser(String login, String password) {
+        String result = "";
         try {
-            SQLConnect.writeDateBase("INSERT INTO 'users' ('login', 'password') VALUES ('" + login + "', '" + password + "'); ");
-            result = 1;
-        } catch (SQLException e) {
+            UUID uuid = UUID.randomUUID();
+            String key = String.valueOf(uuid);
+            Date date = new Date();
+            SQLConnect.writeDateBase("INSERT INTO 'users' ('login', 'password', 'key') VALUES ('" + login + "', '" + password + "', '"+ key +"'); ");
+            result = SQLConnect.gettingFromDateBase(login, "users", "login", "key");
+            SQLConnect.writeDateBase("INSERT INTO 'dialogID' ('first', 'second') VALUES ('PHOENIX', '" + login + "'); ");
+            int id = SQLConnect.gettingIdDialog("PHOENIX", login);
+            SQLConnect.writeDateBase("INSERT INTO 'dialog' ('IDDialog', 'text', 'datetime', 'from') VALUES ('" + id + "', 'WELCOME', '" + date + "', 'PHOENIX'); ");
+    } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return result;
     }
 
-    public static String login(String login, String password) throws ClassNotFoundException, SQLException {
-        String tempPassword = SQLConnect.readDateBase(login, "users");
-        int result;
-        if (tempPassword.equals(password)) result = 1;
-        else result = 0;
-        return String.valueOf(result);
+    public static String login(String login, String password) throws SQLException {
+        String tempPassword = SQLConnect.gettingFromDateBase(login, "users", "login", "password");
+        System.out.println(tempPassword);
+        String result;
+        if (tempPassword.equals(password)) result = SQLConnect.gettingFromDateBase(login, "users", "login", "key");
+        else result = "0";
+        return result;
     }
 
-    public static int createNewDialog(String from, String to, String text) throws SQLException, ClassNotFoundException {
+    public static int createNewDialog(String key, String to, String text) throws SQLException {
         int result;
         Date date = new Date();
+        String from = SQLConnect.gettingFromDateBase(key, "users", "key", "login");
         result = SQLConnect.gettingIdDialog(from, to);
         if (result == 0) {
             SQLConnect.writeDateBase("INSERT INTO 'dialogID' ('first', 'second') VALUES ('" + from + "', '" + to + "'); ");
@@ -36,7 +46,8 @@ public class Function {
         return 1;
     }
 
-    public static String getDialogNames(String login) throws SQLException, ClassNotFoundException {
+    public static String getDialogNames(String key) throws SQLException {
+        String login = SQLConnect.gettingFromDateBase(key, "users", "key", "login");
         String[] result = SQLConnect.gettingDialogNames(login).toArray(new String[0]);
         StringBuilder tempResult;
         if (result.length > 1) {
@@ -44,13 +55,16 @@ public class Function {
             for (int n = 1; n < result.length; n++) {
                 tempResult.append("//").append(result[n]);
             }
-        } else tempResult = new StringBuilder(result[0]);
+        } else {
+            tempResult = new StringBuilder(result[0]);
+        }
         return tempResult.toString();
     }
 
-    public static String getMessagesDialog(String login, String to) throws SQLException, ClassNotFoundException {
+    public static String getMessagesDialog(String key, String to) throws SQLException {
         int id = 0;
 
+        String login = SQLConnect.gettingFromDateBase(key, "users", "key", "login");
         id = SQLConnect.gettingIdDialog(login, to);
         String[] result = SQLConnect.gettingDialog(id).toArray(new String[0]);
 
