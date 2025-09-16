@@ -13,27 +13,28 @@ import java.sql.SQLException;
 public class NewDialog extends TextWebSocketHandler {
 
 
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.out.println(session.getId() + " - connected");
-    }
+  @Override
+  public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    System.out.println(session.getId() + " - connected");
+  }
 
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        System.out.println(session.getId() + " - disconnected");
-    }
+  @Override
+  public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    System.out.println(session.getId() + " - disconnected");
+  }
 
-    @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException, SQLException, ClassNotFoundException {
-        String payload = message.getPayload();
-        System.out.println(payload);
-        String[] parts = payload.split("//", 3);
-        payload = String.valueOf(Function.createNewDialog(parts[0], parts[1], parts[2]));
-        System.out.println(payload + " - reg");
-        try {
-            session.sendMessage(new TextMessage(payload));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+  @Override
+  public void handleTextMessage(WebSocketSession session, TextMessage message)
+      throws IOException, SQLException, ClassNotFoundException {
+    String payload = message.getPayload();
+    System.out.println(payload);
+    String[] parts = payload.split("//", 3);
+    payload = String.valueOf(Function.createNewDialog(parts[0], parts[1], parts[2]));
+    System.out.println(payload + " - reg");
+    try {
+      session.sendMessage(new TextMessage(payload));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
+  }
 }

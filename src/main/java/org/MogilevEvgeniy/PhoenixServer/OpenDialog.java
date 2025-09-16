@@ -12,25 +12,26 @@ import java.sql.SQLException;
 @Component
 public class OpenDialog extends TextWebSocketHandler {
 
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session) {
-        System.out.println(session.getId() + " - connected");
-    }
+  @Override
+  public void afterConnectionEstablished(WebSocketSession session) {
+    System.out.println(session.getId() + " - connected");
+  }
 
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        System.out.println(session.getId() + " - disconnected");
-    }
+  @Override
+  public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+    System.out.println(session.getId() + " - disconnected");
+  }
 
-    @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws SQLException, ClassNotFoundException {
-        String payload = message.getPayload();
-        String[] parts = payload.split("//", 3);
-        payload = Function.getMessagesDialog(parts[0], parts[1]);
-        try {
-            session.sendMessage(new TextMessage(payload));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+  @Override
+  public void handleTextMessage(WebSocketSession session, TextMessage message)
+      throws SQLException, ClassNotFoundException {
+    String payload = message.getPayload();
+    String[] parts = payload.split("//", 3);
+    payload = Function.getMessagesDialog(parts[0], parts[1]);
+    try {
+      session.sendMessage(new TextMessage(payload));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
+  }
 }
