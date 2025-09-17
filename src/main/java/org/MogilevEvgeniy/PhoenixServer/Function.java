@@ -91,4 +91,16 @@ public class Function {
 
     return tempResult.toString();
   }
+
+  public static String getProfileInformation(String key) throws SQLException {
+    String login = SQLConnect.gettingFromDateBase(key, "users", "key", "login");
+    String id = SQLConnect.gettingFromDateBase(key, "users", "key", "id");
+
+    StringBuilder tempResult;
+
+    tempResult = new StringBuilder(login);
+    tempResult.append("//").append(id);
+
+    return tempResult.toString();
+  }
 }

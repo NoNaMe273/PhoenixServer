@@ -29,7 +29,7 @@ public class Profile extends TextWebSocketHandler {
       throws SQLException, ClassNotFoundException {
     String payload = message.getPayload();
     String[] parts = payload.split("//", 3);
-    payload = Function.getMessagesDialog(parts[0], parts[1]);
+    payload = Function.getProfileInformation(parts[0]);
     try {
       session.sendMessage(new TextMessage(payload));
     } catch (IOException e) {
